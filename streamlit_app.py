@@ -1,15 +1,14 @@
 import streamlit as st
 from llama_index import VectorStoreIndex, ServiceContext, Document
 from llama_index.llms import OpenAI as LlamaOpenAI
-from openai import OpenAI as OriginalOpenAI
+from openai import OpenAI
 from llama_index import SimpleDirectoryReader
 
 llama_ai = LlamaOpenAI()
-original_ai = OriginalOpenAI()
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai_api_key = st.secrets.openai_key
-client = original_ai(
+client = OpenAI(
         # This is the default and can be omitted
         api_key=openai_api_key,
     )
