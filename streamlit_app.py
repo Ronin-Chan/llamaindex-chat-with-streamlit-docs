@@ -3,12 +3,12 @@ from llama_index import VectorStoreIndex, ServiceContext, Document
 from llama_index.llms import OpenAI
 import openai
 from llama_index import SimpleDirectoryReader
-from openai import OpenAI
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
 client = OpenAI(
-        api_key = st.secrets.openai_key,
+        # This is the default and can be omitted
+        api_key=st.secrets.openai_key,
     )
 st.title("Chat with CiiLOCK chatbot, powered by LlamaIndex")
          
@@ -19,10 +19,10 @@ if "messages" not in st.session_state.keys(): # Initialize the chat messages his
 
 @st.cache_resource(show_spinner=False)
 def load_data():
-    with st.spinner(text="Loading and indexing the docs - hang tight! This should take 1-2 minutes."):
+    with st.spinner(text="Loading and indexing the Streamlit docs - hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="Your job is to answer technical questions. Keep your answers technical and based on facts - do not hallucinate features. If you do not know, just say Sorry, I do not know."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="You are an expert on the Streamlit Python library and your job is to answer technical questions. Assume that all questions are related to the Streamlit Python library. Keep your answers technical and based on facts - do not hallucinate features. If you do not know the answer, respond with \"Sorry, I don't know.\""))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
@@ -55,8 +55,8 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = st.session_state.chat_engine.chat(prompt)
-            if ("Sorry" in response.response or "sorry" in response.response or "do not" in response.response or "Do not" in response.response):
-                response.response = send_message(input_text)
             st.write(response.response)
+            if ("sorry" in response.response or "Sorry" in response.response or "don't know" in response.response or "Don't know" in response.response):
+                response.response = send_message(prompt)
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
