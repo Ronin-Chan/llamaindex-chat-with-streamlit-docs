@@ -5,7 +5,7 @@ from llama_index.llms import OpenAI
 from llama_index import SimpleDirectoryReader
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
-openai_api_key = st.secrets.openai_key
+openai.api_key = st.secrets.openai_key
 # client = OriginalOpenAI(
 #         # This is the default and can be omitted
 #         api_key=openai_api_key,
