@@ -22,7 +22,7 @@ def load_data():
     with st.spinner(text="Loading and indexing the docs - hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="Your job is to answer technical questions. Keep your answers technical and based on facts - do not hallucinate features. If you don't know, just say Sorry, I don't know."))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="Your job is to answer technical questions. Keep your answers technical and based on facts - do not hallucinate features. If you do not know, just say Sorry, I do not know."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
@@ -55,7 +55,7 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = st.session_state.chat_engine.chat(prompt)
-            if ("Sorry" in response.response or "sorry" in response.response or "don't know" in response.response or "Don't know" in response.response):
+            if ("Sorry" in response.response or "sorry" in response.response or "do not" in response.response or "Do not" in response.response):
                 response.response = send_message(input_text)
             st.write(response.response)
             message = {"role": "assistant", "content": response.response}
