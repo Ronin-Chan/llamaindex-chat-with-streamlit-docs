@@ -1,15 +1,16 @@
 import streamlit as st
 from llama_index import VectorStoreIndex, ServiceContext, Document
 from llama_index.llms import OpenAI
-# from openai import OpenAI as OriginalOpenAI
+import openai
+from openai import OpenAI as OriginalOpenAI
 from llama_index import SimpleDirectoryReader
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
-# client = OriginalOpenAI(
-#         # This is the default and can be omitted
-#         api_key=openai_api_key,
-#     )
+client = OriginalOpenAI(
+        # This is the default and can be omitted
+        api_key=st.secrets.openai_key,
+    )
 st.title("Chat with CiiLOCK chatbot, powered by LlamaIndex")
          
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
