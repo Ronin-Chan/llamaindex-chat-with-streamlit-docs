@@ -1,15 +1,15 @@
 import streamlit as st
 from llama_index import VectorStoreIndex, ServiceContext, Document
 from llama_index.llms import OpenAI
-from openai import OpenAI as OriginalOpenAI
+# from openai import OpenAI as OriginalOpenAI
 from llama_index import SimpleDirectoryReader
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai_api_key = st.secrets.openai_key
-client = OriginalOpenAI(
-        # This is the default and can be omitted
-        api_key=openai_api_key,
-    )
+# client = OriginalOpenAI(
+#         # This is the default and can be omitted
+#         api_key=openai_api_key,
+#     )
 st.title("Chat with CiiLOCK chatbot, powered by LlamaIndex")
          
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
@@ -43,17 +43,17 @@ if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = st.session_state.chat_engine.chat(prompt)
-            if ("sorry" in response.response or "Sorry" in response.response or "don't know" in response.response or "Don't know" in response.response):
-                chat_completion = client.chat.completions.create(
-                    messages=[
-                        {
-                            "role": "user",
-                            "content": prompt
-                        }
-                    ],
-                    model="gpt-3.5-turbo-1106",
-                )
-                response.response = chat_completion.choices[0].message.content
+            # if ("sorry" in response.response or "Sorry" in response.response or "don't know" in response.response or "Don't know" in response.response):
+            #     chat_completion = client.chat.completions.create(
+            #         messages=[
+            #             {
+            #                 "role": "user",
+            #                 "content": prompt
+            #             }
+            #         ],
+            #         model="gpt-3.5-turbo-1106",
+            #     )
+            #     response.response = chat_completion.choices[0].message.content
             st.write(response.response)
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
