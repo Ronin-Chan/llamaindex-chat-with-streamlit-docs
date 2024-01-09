@@ -38,12 +38,12 @@ for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-def send_message(input_text):
+def send_message(prompt):
     chat_completion = client.chat.completions.create(
         messages=[
             {
                 "role": "user",
-                "content": input_text
+                "content": prompt
             }
         ],
         model="gpt-3.5-turbo-1106",
