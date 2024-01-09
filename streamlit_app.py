@@ -8,7 +8,7 @@ st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", l
 openai.api_key = st.secrets.openai_key
 client = OpenAI(
         # This is the default and can be omitted
-        api_key=st.secrets.openai_key,
+        api_key=openai.api_key,
     )
 st.title("Chat with CiiLOCK chatbot, powered by LlamaIndex")
          
@@ -38,25 +38,22 @@ for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
 
-def send_message(prompt):
-    chat_completion = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": prompt
-            }
-        ],
-        model="gpt-3.5-turbo-1106",
-    )
-    return chat_completion.choices[0].message.content
-
 # If last message is not from assistant, generate a new response
 if st.session_state.messages[-1]["role"] != "assistant":
     with st.chat_message("assistant"):
         with st.spinner("Thinking..."):
             response = st.session_state.chat_engine.chat(prompt)
             if ("sorry" in response.response or "Sorry" in response.response or "don't know" in response.response or "Don't know" in response.response):
-                response.response = send_message(prompt)
+                chat_completion = client.chat.completions.create(
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": prompt
+                        }
+                    ],
+                    model="gpt-3.5-turbo-1106",
+                )
+                response.response = chat_completion.choices[0].message.content
             st.write(response.response)
             message = {"role": "assistant", "content": response.response}
             st.session_state.messages.append(message) # Add response to message history
