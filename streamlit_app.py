@@ -54,9 +54,10 @@ if st.session_state.messages[-1]["role"] != "assistant":
                     ],
                     model="gpt-3.5-turbo-1106",
                 )
-                response.response = "[Internal] " + chat_completion.choices[0].message.content
-                st.write(response.response)
+                response.response = chat_completion.choices[0].message.content
+                st.write("[Internal] " + response.response)
+                message = {"role": "assistant", "content": "[Internal] " + response.response}
             else:
                 st.write("[External] " + response.response)
-            message = {"role": "assistant", "content": response.response}
+                message = {"role": "assistant", "content": "[External] " + response.response}
             st.session_state.messages.append(message) # Add response to message history
