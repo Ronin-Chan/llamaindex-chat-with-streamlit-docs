@@ -7,6 +7,9 @@ from openai import OpenAI
 
 st.set_page_config(page_title="Chat with CiiLOCK chatbot", page_icon="⚙️", layout="centered", initial_sidebar_state="auto", menu_items=None)
 openai.api_key = st.secrets.openai_key
+client = OpenAI(
+        api_key = st.secrets.openai_key,
+    )
 st.title("Chat with CiiLOCK chatbot, powered by LlamaIndex")
          
 if "messages" not in st.session_state.keys(): # Initialize the chat messages history
@@ -19,7 +22,7 @@ def load_data():
     with st.spinner(text="Loading and indexing the docs - hang tight! This should take 1-2 minutes."):
         reader = SimpleDirectoryReader(input_dir="./data", recursive=True)
         docs = reader.load_data()
-        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="Your job is to answer technical questions. Keep your answers technical and based on facts - do not hallucinate features. If you don't know, just say 'Sorry, I don't know.'"))
+        service_context = ServiceContext.from_defaults(llm=OpenAI(model="gpt-3.5-turbo", temperature=0.5, system_prompt="Your job is to answer technical questions. Keep your answers technical and based on facts - do not hallucinate features. If you don't know, just say Sorry, I don't know."))
         index = VectorStoreIndex.from_documents(docs, service_context=service_context)
         return index
 
@@ -34,11 +37,6 @@ if prompt := st.chat_input("Your question"): # Prompt for user input and save to
 for message in st.session_state.messages: # Display the prior chat messages
     with st.chat_message(message["role"]):
         st.write(message["content"])
-
-client = OpenAI(
-        # This is the default and can be omitted
-        api_key = st.secrets.openai_key,
-    )
 
 def send_message(input_text):
     chat_completion = client.chat.completions.create(
